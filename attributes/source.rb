@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: git
-# Recipe:: default
+# Attributes:: source
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2011, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-case node[:platform]
-when "debian", "ubuntu"
-  package "git-core"
+default['git']['source']['version'] = "1.7.6.1"
+default['git']['source']['prefix']  = "/usr/local"
+
+default['git']['source']['tar_url']   =
+  "https://github.com/git/git/tarball/v#{node['git']['source']['version']}"
+default['git']['source']['tar_checksum']   =
+  "50664be795fe40970cd890384144368cfd63035bd5b9faccdad4ccbec6b82898"
+
+case platform
 when "suse"
-  if node[:platform_version].to_f < 11.0
-    include_recipe "git::source"
-  else
-    package "git-core"
-  end
-else 
-  package "git"
+  node.set['git']['source']['pkgs'] = %w{curl-devel python-devel}
+else
+  node.set['git']['source']['pkgs'] = []
 end
